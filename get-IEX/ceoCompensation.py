@@ -7,20 +7,18 @@ def ceoCompensation(cursor, token, base_url, vtype, symbol):
         tester = requests.get(base_url + vtype + "stock/" + symbol + "/ceo-compensation?token=" + token)
         json = tester.json()
     except:
-        print("Request error")
-        return
+        print("Request error for symbol " + symbol)
+        return False
     cursor.execute('''INSERT INTO ceoCompensation VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)''', (json['symbol'],
                  json['companyName'], json['name'], json['location'], json['salary'], json['bonus'],
                  json['stockAwards'], json['optionAwards'], json['nonEquityIncentives'], json['pensionAndDeferred'],
                  json['otherComp'], json['total'],json['year']))
-
-
-def rmRow(cursor, symbol): # removes row if symbol is found
-    cursor.execute("DELETE FROM ceoCompensation WHERE (symbol = ?)", (symbol,))
+    return True
 
 
 
 def ceoCompensationForSymbols(symbols):
+    completed = []
     conn = sqlite3.connect('base.db')
     cursor = conn.cursor()
 
@@ -30,12 +28,21 @@ def ceoCompensationForSymbols(symbols):
                    "year text)")
     # if table does not exist, make it
     for i in symbols:
-        rmRow(cursor, i)  # removes old data
-        ceoCompensation(cursor, API_token, iex_base_url, version, i)  # adds new data
-    conn.commit()
+        success = False
+        cursor.execute("DELETE FROM ceoCompensation WHERE (symbol = ?)", (i,))
+        success = ceoCompensation(cursor, API_token, iex_base_url, version, i)  # adds new data
+        if success:
+            completed.append(i)
+            conn.commit()
+        else:
+            print("An error occurred for symbol " + i + ".  No changes were made to this row.")
+            conn.close()
+            conn = sqlite3.connect('base.db')
+            cursor = conn.cursor()
     conn.close()
+    return "Completed CEO Compensation data update for symbols " + str(completed)
 
 if __name__ == "__main__":
     # execute only if run as a script
-    sampleSymbols = ["XOM", "AAPL", "AMZN"]
-    ceoCompensationForSymbols(sampleSymbols)
+    sampleSymbols = ["XOM", "AAPL", "AMZN", "NOT_A_SYMBOL"]
+    print(ceoCompensationForSymbols(sampleSymbols))
