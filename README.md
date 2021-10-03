@@ -5,13 +5,8 @@ Rochester Institute of Technology's Financial Management Association. A group of
 
 **Installation:** You will need python 3.9, to download Python 3.9 or higher you can go to the following page here: https://www.python.org/downloads/
 
-The following modules are also required, SQLite3, SQLalchemy and requests. To install this modules open your python command terminal and type in the following,
-
-pip install sqlite3
-pip install sqlalchemy
-pip install requests
-
-You can then download the repo and use it accordingly. It is recommended to run this in the PyCharm IDE, but not required.
+The required modules can be installed with the collowing command:
+`pip install -r requirements.txt`
 
 **Contributing:** The best way to contribute to this project is by adding in other endpoints with fundamental financial data or 
 
