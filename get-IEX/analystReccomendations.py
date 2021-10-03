@@ -1,8 +1,9 @@
 import requests
 import sqlite3
-from universal import *
-import time
+from sqlalchemy import Table, Column, Integer, String
 
+from IEX_universal import *
+from DB_init import engine, meta
 
 """
 100 	Strong Buy

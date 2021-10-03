@@ -1,44 +1,64 @@
 import requests
 import sqlite3
-from universal import *
+from sqlalchemy import Table, Column, Integer, String
 
-def ceoCompensation(cursor, token, base_url, vtype, symbol):
+from IEX_universal import *
+from DB_init import engine, meta
+
+def ceoCompensation(conn, table, token, base_url, vtype, symbol):
     try:
         tester = requests.get(base_url + vtype + "stock/" + symbol + "/ceo-compensation?token=" + token)
         json = tester.json()
     except:
         print("Request error for symbol " + symbol)
         return False
-    cursor.execute('''INSERT INTO ceoCompensation VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)''', (json['symbol'],
-                 json['companyName'], json['name'], json['location'], json['salary'], json['bonus'],
-                 json['stockAwards'], json['optionAwards'], json['nonEquityIncentives'], json['pensionAndDeferred'],
-                 json['otherComp'], json['total'],json['year']))
+    
+    ins = table.insert().values(
+        symbol=json['symbol'], 
+        companyName=json['companyName'],
+        name=json['name'],
+        location=json['location'],
+        salary=json['salary'],
+        bonus=json['bonus'],
+        stockAwards=json['stockAwards'],
+        optionAwards=json['optionAwards'],
+        nonEquityIncentives=json['nonEquityIncentives'],
+        pensionAndDeferred=json['pensionAndDeferred'],
+        otherComp=json['otherComp'],
+        total=json['total'],
+        year=json['year']
+    )
+    result = conn.execute(ins)
     return True
 
 
 
 def ceoCompensationForSymbols(symbols):
     completed = []
-    conn = sqlite3.connect('base.db')
-    cursor = conn.cursor()
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS ceoCompensation (symbol text, companyName text, name text, "
-                   "location text, salary integer, bonus integer, stockAwards integer, optionAwards integer,"
-                   "nonEquityIncentives integer, pensionAndDeferred integer, otherComp integer, total integer, "
-                   "year text)")
-    # if table does not exist, make it
+    table = Table ("ceoCompensation", meta, 
+        Column("symbol", String),
+        Column("companyName", String),
+        Column("name", String),
+        Column("location", String),
+        Column("salary", Integer),
+        Column("bonus", Integer),
+        Column("stockAwards", Integer),
+        Column("optionAwards", Integer),
+        Column("nonEquityIncentives", Integer),
+        Column("pensionAndDeferred", Integer),
+        Column("otherComp", Integer),
+        Column("total", Integer),
+        Column("year", String))
+    meta.create_all(engine) # if table does not exist, make it
+    conn = engine.connect()
+
     for i in symbols:
         success = False
-        cursor.execute("DELETE FROM ceoCompensation WHERE (symbol = ?)", (i,))
-        success = ceoCompensation(cursor, API_token, iex_base_url, version, i)  # adds new data
+        success = ceoCompensation(conn, table, API_token, iex_base_url, version, i)  # adds new data
         if success:
             completed.append(i)
-            conn.commit()
-        else:
-            print("An error occurred for symbol " + i + ".  No changes were made to this row.")
-            conn.close()
-            conn = sqlite3.connect('base.db')
-            cursor = conn.cursor()
+        conn.commit()
     conn.close()
     return "Completed CEO Compensation data update for symbols " + str(completed)
 
