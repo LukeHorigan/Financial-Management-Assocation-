@@ -24,8 +24,14 @@ class StockEquities:
         if 'range' in kwargs.keys():
             endpoint += f'range={kwargs["range"]}&'
         url = IEX_BASE_URL+endpoint+f'token={self.__public_key}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Advanced Fundamentals'")
+            # THROW EXCEPTION
+       
+        return json
 
     def advanced_stats(self):
         """
