@@ -19,3 +19,11 @@ ceoCompensationTable = Table("ceoCompensation", meta,
               Column("otherComp", Integer),
               Column("total", Integer),
               Column("year", String))
+
+
+def makeRowFromJSON(conn, table, json):
+    row = {}
+    for i in table.columns:
+        row.update({i.description : json[i.description]})
+    result = conn.execute(table.insert(), [row])
+    return True

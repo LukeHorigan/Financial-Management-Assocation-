@@ -1,3 +1,7 @@
+"""
+Old code used to take symbols and requests and make rows.  Made more modular in different versions.
+"""
+
 import requests
 import sqlite3
 from sqlalchemy import Table, Column, Integer, String
