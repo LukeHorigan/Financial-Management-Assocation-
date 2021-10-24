@@ -5,7 +5,7 @@ from Resources import *
 from dotenv import load_dotenv
 
 
-class GetIex:
+class GetClass:
     def __init__(self, symbol):
         load_dotenv()
         self.symbol = symbol
