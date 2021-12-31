@@ -11,12 +11,13 @@ from IEX_universal import *
 from DB_init import engine, meta, ceoCompensationTable
 
 
-def getRow(conn, token, url_prefix, url_suffix, table, symbol):
+def getRow(conn, token, base_url, url_prefix, url_suffix, table, symbol):
     try:
-        tester = requests.get(url_prefix + symbol + url_suffix + "?token=" + token)
+        tester = requests.get(base_url + url_prefix + symbol + url_suffix + "?token=" + token)
         json = tester.json()
     except:
         print("Request error for symbol " + symbol)
+        print("Url used: " + base_url + url_prefix + symbol + url_suffix + "?token=" + token)
         return False
         
     row = {}
@@ -39,15 +40,15 @@ def forRequestForSymbols(symbols, requests, tables):
         for i in symbols:
             success = False
             success = getRow(
-                conn, API_token, iex_base_url, tables[req], i)  # adds new data
+                conn, API_token, iex_base_url + version, requests[req][0], requests[req][1], tables[req], i)  # adds new data
             if success:
                 completed.append(i)
             conn.commit()
         conn.close()
-    return "Completed CEO Compensation data update for symbols " + str(completed)
+    return "Completed data update for symbols " + str(completed)
 
 
 if __name__ == "__main__":
     # execute only if run as a script
     sampleSymbols = ["XOM", "AAPL", "AMZN", "NOT_A_SYMBOL"]
-    print(forRequestForSymbols(sampleSymbols, ['/ceo-compensation'], [ceoCompensationTable]))
+    print(forRequestForSymbols(sampleSymbols, [['stock/', '/ceo-compensation']], [ceoCompensationTable]))
