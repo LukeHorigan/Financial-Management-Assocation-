@@ -4,6 +4,10 @@ import requests
 from Resources import *
 from dotenv import load_dotenv
 
+class InterfaceError(Exception):
+    def __init__(self):
+        super()
+
 
 class GetClass:
     def __init__(self, symbol):
@@ -31,8 +35,17 @@ class GetClass:
         endpoint = f'/time-series/CORE_ESTIMATES/{self.symbol}/?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
         print(url)
-        response = requests.get(url)
-        return response
+
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'CORE_ESTIMATES'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def balance_sheet(self, **kwargs):
         """
@@ -50,8 +63,17 @@ class GetClass:
                 endpoint += f'{key}={kwargs[key]}&?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
         print(url)
-        response = requests.get(url)
-        return response
+        
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Balance Sheet'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def bonus_issue(self, period,last):
         """
@@ -59,12 +81,20 @@ class GetClass:
         IEX URL: https://iexcloud.io/docs/api/#bonus-issue
         """
         print(self.symbol)
-        #last must be an integer. Not sure how large last can be or what the set "period" is by default
-        #cannot use period here such as quarterly or annual
+        # last must be an integer. Not sure how large last can be or what the set "period" is by default
+        # cannot use period here such as quarterly or annual
         endpoint = f'/time-series/advanced_bonus/{self.symbol}?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url).json()
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Bonus Issue'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def book(self):
         """
@@ -77,8 +107,16 @@ class GetClass:
         print(self.symbol)
         endpoint = f'/stock/{self.symbol}/book/?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url).json()
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Book'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def cash_flow(self, period,last):
         """
@@ -98,13 +136,19 @@ class GetClass:
         :return:
         """
         endpoint = f"/stock/{self.symbol}/cash-flow/{period}?"
-        #the value of period can be period='annual' or period='quarter'
-        #the value of last needs to be up to 12 if period = quarter and up to 4 if period = annual
+        # the value of period can be period='annual' or period='quarter'
+        # the value of last needs to be up to 12 if period = quarter and up to 4 if period = annual
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        print(url)
-        response = requests.get(url)
-        print(response)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Cash Flow'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def ceo_compensation (self):
         """
@@ -114,9 +158,16 @@ class GetClass:
         """
         endpoint = f"/stock/{self.symbol}/ceo-compensation/?"
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url).json()
-        print(response)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'CEO Compensation'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def charts(self):
         return
@@ -135,7 +186,7 @@ class GetClass:
     #     endpoint = f"/stock/market/collection/tag?collectionName=Airlines/?"
     #     url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
     #     print(url)
-    #     response = requests.get(url)
+    #     
     #     print(response.raw)
     #     print(response.headers)
     #     print(response.content)
@@ -152,8 +203,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/company?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Company'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def delayed_quote(self, **kwargs):
         """
@@ -169,8 +228,16 @@ class GetClass:
             for key in kwargs.keys():
                 endpoint += f'{key}={kwargs[key]}&'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Delayed Quote'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def distribution(self):
         return
@@ -190,8 +257,16 @@ class GetClass:
         else:
             endpoint += f'?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Dividends'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def earnings_today(self):
         return
@@ -220,8 +295,16 @@ class GetClass:
         if 'range' in kwargs.keys():
             endpoint += f'range={kwargs["range"]}&'
             url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
+        try:
             response = requests.get(url)
-        return response
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Fundamentals'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def fundamental_valuations(self):
         return
@@ -252,8 +335,16 @@ class GetClass:
             for key in kwargs.keys():
                 endpoint += f'{key}={kwargs[key]}&'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Historical Prices'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def income_statement(self):
         return
@@ -273,8 +364,16 @@ class GetClass:
             for key in kwargs.keys():
                 endpoint += f'{key}={kwargs[key]}&'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Income Statement'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def insider_roster(self):
         return
@@ -294,8 +393,16 @@ class GetClass:
             for key in kwargs.keys():
                 endpoint += f'{key}={kwargs[key]}&'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Reported Financials'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def financials(self, **kwargs):
         """
@@ -311,8 +418,16 @@ class GetClass:
             for key in kwargs.keys():
                 endpoint += f'{key}={kwargs[key]}&'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Financials'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def fund_ownership(self):
         """
@@ -326,8 +441,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/fund-ownership?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Fund Ownership'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def fundamentals(self):
         return
@@ -349,8 +472,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/insider-roster?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Insider Roster'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def insider_summary(self):
         """
@@ -362,8 +493,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/insider-summary?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Insider Summary")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def insider_transactions(self):
         """
@@ -375,8 +514,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/insider-transactions?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Insider Transations'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def institutional_ownership(self):
         """
@@ -388,8 +535,17 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/institutional_ownership?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Institutional Ownership'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def intraday_prices(self, **kwargs):
         """
@@ -412,8 +568,16 @@ class GetClass:
             for key in kwargs.keys():
                 endpoint += f'{key}={kwargs[key]}&'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Intraday Prices")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def ipo_calendar(self):
         return
@@ -429,8 +593,16 @@ class GetClass:
         endpoint = f'/stock/{self.symbol}/largest-trades?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
         print(url)
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Largest Trades'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def largest_trades(self):
         return
@@ -448,8 +620,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/logo?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Logo'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def market_volume(self):
         return
@@ -473,8 +653,16 @@ class GetClass:
         else:
             endpoint = f'/stock/{self.symbol}/ohlc?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'OHLC'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def open_close_price(self):
         return
@@ -504,8 +692,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/stats?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Key Stats'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
 
     def open_close_price(self):
@@ -525,8 +721,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/peers?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Peers'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def previous_day_price(self, market: bool):
         """
@@ -542,8 +746,16 @@ class GetClass:
         else:
             endpoint = f'/stock/{self.symbol}/previous?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Previous'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def price_only(self):
         """
@@ -556,8 +768,16 @@ class GetClass:
         endpoint = f'/stock/{self.symbol}/price?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
         print(url)
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Price'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
 
     def real_time_quote(self):
@@ -615,8 +835,16 @@ class GetClass:
         """
         endpoint = f'/stock/{self.symbol}/advanced-stats?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Advanced Stats'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
     def technical_indicators(self, indicator_name, **kwargs):
         """
@@ -634,8 +862,18 @@ class GetClass:
             for key in kwargs.keys():
                 endpoint += f'{key}={kwargs[key]}&'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Indicator'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
+
+
     def upcoming_events(self):
         return
 
@@ -653,8 +891,16 @@ class GetClass:
         else:
             endpoint = f'/stock/{self.symbol}/range?'
         url = IEX_BASE_URL + endpoint + f'token={self.IEX_API_KEY}'
-        response = requests.get(url)
-        return response
+        try:
+            response = requests.get(url)
+            json = response.json()
+        except:
+            print("Request error for symbol " + self.symbol + " on IEX Request 'Splits'")
+            raise InterfaceError("API returned null response.")
+
+        return json
+
+
 
 
     def volume_by_venue(self):
