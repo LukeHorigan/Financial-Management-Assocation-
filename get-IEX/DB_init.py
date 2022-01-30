@@ -17,7 +17,7 @@ analystRecommendationsTable = Table("analystRecommenations", meta,
                                     Column("updated", BigInteger))
 
 balanceSheetTable = Table("balanceSheet", meta,
-                          Column("symbol", String), 
+                          Column("symbol", String),
                           Column("reportDate", String),
                           Column("filingType", String),
                           Column("fiscalDate", String),
@@ -82,7 +82,7 @@ bonusIssueTable = Table("bonusIssue", meta,
                         Column("date", BigInteger),
                         Column("updated", BigInteger))
 
-book = null # What?
+bookTable = null  # What?
 
 cashFlowTable = Table("cashFlow", meta,
                       Column("symbol", String),
@@ -127,6 +127,41 @@ ceoCompensationTable = Table("ceoCompensation", meta,
                              Column("otherComp", BigInteger),
                              Column("total", BigInteger),
                              Column("year", String))
+
+# CollectionsTable = Table("collections", meta, # What on earth...
+
+companyTable = Table("company", meta,
+                     Column("symbol", String),
+                     Column("companyName", String),
+                     Column("exchange", String),
+                     Column("industry", String),
+                     Column("website", String),
+                     Column("description", String),
+                     Column("CEO", String),
+                     Column("securityName", String),
+                     Column("issueType", String),
+                     Column("sector", String),
+                     Column("primarySicCode", Integer),
+                     Column("employees", Integer),
+                     # Will need to array to stringify tags
+                     Column("tags", String),
+                     Column("address", String),
+                     Column("address2", String),
+                     Column("state", String),
+                     Column("city", String),
+                     Column("zip", String),
+                     Column("country",  String),
+                     Column("phone", String))
+
+delayedQuoteTable = Table("delayedQuote", meta,
+                          Column("symbol", String),
+                          Column("delayedPrice", Float),
+                          Column("delayedSize", Integer),
+                          Column("delayedPriceTime", BigInteger),
+                          Column("high", Float),
+                          Column("low", Float),
+                          Column("totalVolume", BigInteger),
+                          Column("processedTime", BigInteger))
 
 
 def makeRowFromJSON(conn, table, json):
