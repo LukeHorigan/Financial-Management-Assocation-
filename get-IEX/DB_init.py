@@ -1,6 +1,6 @@
 from sqlalchemy import BigInteger, create_engine, Table, Column, Integer, String, MetaData
 from sqlalchemy.sql.expression import null
-from sqlalchemy.sql.sqltypes import Float
+from sqlalchemy.sql.sqltypes import Float, Boolean
 
 engine = create_engine(
     "sqlite+pysqlite:///base.db", echo=True, future=True)
@@ -162,6 +162,37 @@ delayedQuoteTable = Table("delayedQuote", meta,
                           Column("low", Float),
                           Column("totalVolume", BigInteger),
                           Column("processedTime", BigInteger))
+
+
+distributionTable = Table("distribution", meta,
+                          Column("symbol", String),
+                          Column("exDate", String),
+                          Column("recordDate", String),
+                          Column("paymentDate", String),
+                          Column("withdrawlFromDate", String),
+                          Column("withdrawlToDtate", String),
+                          Column("electionDate", String),
+                          Column("fromFactor", Float),
+                          Column("toFactor", Float),
+                          Column("ratio", Float),
+                          Column("minPrice", Float),
+                          Column("maxPrice", Float),
+                          Column("description", String),
+                          Column("flagg", String),
+                          Column("securityType", String),
+                          Column("hasWithdrawalRights", Boolean),
+                          Column("notes", String),
+                          Column("figi", String),
+                          Column("lastUpdated", String),
+                          Column("countryCode", String),
+                          Column("parValue", Float),
+                          Column("refid", String),
+                          Column("created", String),
+                          Column("id", String),
+                          Column("key", String),
+                          Column("subkey", String),
+                          Column("date", BigInteger),
+                          Column("updated", BigInteger))
 
 
 def makeRowFromJSON(conn, table, json):
