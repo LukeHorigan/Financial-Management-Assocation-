@@ -8,7 +8,7 @@ from sqlalchemy import Table, Column, Integer, String
 import json
 
 from IEX_universal import *
-from DB_init import engine, meta, ceoCompensationTable
+from DB_init import engine, meta, analystRecommendationsTable, balanceSheetTable, bonusIssueTable, ceoCompensationTable, delayedQuoteTable
 
 
 def getRow(conn, token, base_url, url_prefix, url_suffix, table, symbol):
@@ -22,10 +22,27 @@ def getRow(conn, token, base_url, url_prefix, url_suffix, table, symbol):
         
     row = {}
     for i in table.columns:
-        row.update({i.description : json[i.description]})
+        attribute = getFromJson(json, i.description)
+        if(attribute == "egg"):
+            print("JSON Read Failure for symbol '" + symbol + "' on attr '" + i.description + "'.")
+            return False
+        row.update({i.description : attribute})
     result = conn.execute(table.insert(), [row])
     return True
 
+
+def getFromJson(json, target):
+    for key in json:
+        if(key == target):
+            return json[key]
+        try:
+            if type(key).__name__ == "module" or type(key).__name__ == 'dict':
+                response = getFromJson(key, target)
+                if response != "egg":
+                    return response
+        except Exception:
+            pass
+    return "egg"
 
 def forRequestForSymbols(symbols, requests, tables):
     """
@@ -44,11 +61,14 @@ def forRequestForSymbols(symbols, requests, tables):
             if success:
                 completed.append(i)
             conn.commit()
-        conn.close()
+    conn.close()
     return "Completed data update for symbols " + str(completed)
 
 
 if __name__ == "__main__":
     # execute only if run as a script
     sampleSymbols = ["XOM", "AAPL", "AMZN", "NOT_A_SYMBOL"]
-    print(forRequestForSymbols(sampleSymbols, [['stock/', '/ceo-compensation']], [ceoCompensationTable]))
+    print(forRequestForSymbols(sampleSymbols, [["time-series/CORE_ESTIMATES/", "/"], ['stock/', '/balance-sheet'], ["time-series/advanced-bonus/", "/"], ['stock/', '/ceo-compensation'], ["stock/", "/delayed-quote"]], [analystRecommendationsTable, balanceSheetTable, bonusIssueTable, ceoCompensationTable, delayedQuoteTable]))
+
+
+ 

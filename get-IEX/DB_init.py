@@ -8,7 +8,7 @@ meta = MetaData()
 print(engine, meta)
 
 analystRecommendationsTable = Table("analystRecommenations", meta,
-                                    Column("symbol, String"),
+                                    Column("symbol", String),
                                     Column("analystCount", Integer),
                                     Column("consensusDate", String),
                                     Column("marketConsensus", Float),
